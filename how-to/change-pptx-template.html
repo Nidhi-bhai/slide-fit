@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Change a PPTX template without rebuilding slides — SlideFit</title>
+  <meta name="description" content="How to change a PPTX template and keep titles, bullets, images, and tables. What a PowerPoint template file actually contains, and how to point an old deck at a new master.">
+  <link rel="canonical" href="https://nidhi-bhai.github.io/slide-fit/how-to/change-pptx-template.html">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>SlideFit</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../index.html#bench">Open the tool</a>
+      <a href="apply-template-to-existing-powerpoint.html">Apply a template</a>
+      <a href="map-slide-layouts.html">Layouts</a>
+    </nav>
+  </header>
+  <article class="article">
+    <p class="eyebrow">Guide</p>
+    <h1>Change a PPTX template and keep the words</h1>
+    <p>A “template” in PowerPoint is easy to confuse with a theme colour. The file people hand you — often a <code>.potx</code>, sometimes just a <code>.pptx</code> named Template — contains a slide master, slide layouts (Title Slide, Title and Content, Section Header, and the rest), and a theme of fonts and colours. Changing the template means moving your content onto that master. Recolouring a shape on one slide is a different, smaller task.</p>
+
+    <h2>Save a template you can actually use</h2>
+    <p>If the brand file opens as a single title slide that says the company name, that is enough. SlideFit throws away content slides from the template and keeps the master, the layouts, and the theme. If you only have a <code>.potx</code>, you can drop that file directly, or use File → Save As → PowerPoint Presentation (<code>.pptx</code>) and drop the copy. Do not paste a screenshot of the template. The tool needs the layouts, not a picture of them.</p>
+    <p>Check the template once before you convert a long deck. View → Slide Master. You want a real title placeholder and a body placeholder, not a flattened JPEG of a slide. If the “template” is a picture filling the slide, there is nothing to reflow into.</p>
+
+    <h2>Change the template with SlideFit</h2>
+    <ol>
+      <li>Put the old deck on the left of <a href="../index.html">SlideFit</a> and the template on the right.</li>
+      <li>Fit slides. Read the mapping line under the preview. “Pipeline health → Title and Content” means the bullets were written into that layout’s body placeholder, so they pick up the template’s bullet font and colour.</li>
+      <li>Download. The new package still contains the template’s <code>theme1.xml</code>, slide master, and layouts. Text is marked to use the theme’s major and minor fonts (<code>+mj-lt</code> and <code>+mn-lt</code>) and the theme text colour, so a later edit to the theme follows through.</li>
+    </ol>
+
+    <h2>What will look different on purpose</h2>
+    <p>Slide size follows the template. A 4:3 source on a 16:9 template is reflowed, not stretched like a photo. A logo or coloured bar that lives on the master shows up on every new slide, because those shapes are not placeholders. The sample Harbor template includes a teal bar and the words “HARBOR &amp; CO.” so you can see this immediately.</p>
+    <p>Footers, dates, and slide numbers stay with the layout. SlideFit does not copy the old deck’s footer text over them.</p>
+
+    <h2>What will not change by itself</h2>
+    <ul>
+      <li>Speaker notes are not copied.</li>
+      <li>Slide transitions and animations are not copied.</li>
+      <li>Embedded fonts in the old deck are not required. The new file asks for the template’s fonts. If a teammate does not have Georgia or whatever the theme names, PowerPoint substitutes, the same way it would with the template itself.</li>
+    </ul>
+    <p>If you need the notes, copy them from the original after the visual pass. Notes are text; the painful part was the master.</p>
+
+    <h2>Related</h2>
+    <p><a href="convert-slides-to-company-template.html">A checklist for company templates</a> · <a href="rebrand-pptx-without-uploading.html">Do this without uploading the deck</a> · <a href="../privacy.html">Privacy</a></p>
+  </article>
+  <footer class="site-footer">
+    <p>Built by <a href="https://github.com/Nidhi-bhai">Nidhi Karuturi</a></p>
+    <p><a href="../privacy.html">Privacy</a></p>
+  </footer>
+</body>
+</html>

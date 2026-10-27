@@ -1,0 +1,22 @@
+{
+  "name": "slidefit",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Browser-only tool that reflows a PowerPoint deck into a company template.",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "samples": "python3 scripts/generate_samples.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nidhi-bhai/slide-fit.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@fontsource/fraunces": "^5.2.8",
+    "@fontsource/outfit": "^5.2.8",
+    "@xmldom/xmldom": "^0.8.11",
+    "jszip": "^3.10.1",
+    "puppeteer-core": "^24.15.0"
+  }
+}

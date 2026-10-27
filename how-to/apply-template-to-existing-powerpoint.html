@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apply a template to an existing PowerPoint — SlideFit</title>
+  <meta name="description" content="How to apply a template to an existing PowerPoint without rebuilding every slide. What PowerPoint can do by hand, and how SlideFit reflows a PPTX in the browser.">
+  <link rel="canonical" href="https://nidhi-bhai.github.io/slide-fit/how-to/apply-template-to-existing-powerpoint.html">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>SlideFit</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../index.html#bench">Open the tool</a>
+      <a href="change-pptx-template.html">Change a template</a>
+      <a href="map-slide-layouts.html">Layouts</a>
+    </nav>
+  </header>
+  <article class="article">
+    <p class="eyebrow">Guide</p>
+    <h1>Apply a template to an existing PowerPoint</h1>
+    <p>You have a finished deck in the old theme, and a company template that marketing actually wants people to use. Applying that template is not the same as changing a font. The template is a slide master, a set of layouts, and a colour theme. The deck is the words and pictures sitting on a different master. This page is the practical version of that job.</p>
+
+    <h2>What you need</h2>
+    <ul>
+      <li>The existing deck, saved as <code>.pptx</code>. If it is an old <code>.ppt</code>, open it once and save as PowerPoint Presentation.</li>
+      <li>The company template as <code>.pptx</code> or <code>.potx</code>. A blank deck that already uses the master is enough. You do not need a <code>.potx</code> specifically.</li>
+      <li>A browser. SlideFit does not install, and it does not upload either file.</li>
+    </ul>
+
+    <h2>The manual way, so you know what “done” looks like</h2>
+    <p>In PowerPoint you can start from the template and use Home → New Slide → Reuse Slides, then pick the old deck. The slides arrive with their original formatting. You then select them and choose Reset, or pick a layout from the Layout gallery, and fix whatever broke. That works. It is also one slide at a time, and Reset often throws text into the wrong placeholder when the old file never used placeholders.</p>
+    <p>Copying the master the other direction (Design → browse for a theme) only works cleanly when the source slides were built on standard layouts. A deck made of loose text boxes ignores the new master until someone rebuilds it.</p>
+
+    <h2>The SlideFit way</h2>
+    <ol>
+      <li>Open <a href="../index.html">SlideFit</a>.</li>
+      <li>Drop the existing deck on the left and the company template on the right. The two sample files are there if you want to see a conversion before you use a real deck.</li>
+      <li>Choose Fit slides. The preview lists each source slide and the layout it landed on: Title Slide, Section Header, Title and Content, or Picture with Caption.</li>
+      <li>Download the new <code>.pptx</code> and open it in PowerPoint or LibreOffice. The original files are untouched.</li>
+    </ol>
+    <p>Free conversions keep the first five slides and append a watermark slide. Pro, at $5 for that deck or $12 for a month in this browser, converts the rest and leaves the watermark out. The unlock is stored locally. The <a href="../index.html#pricing">pricing section</a> says that plainly.</p>
+
+    <h2>Check these after you open the file</h2>
+    <ul>
+      <li>Titles that were typed into a random text box may have been treated as the title. Skim the first line of each slide.</li>
+      <li>A picture is fitted inside the picture placeholder. If the template’s caption area is short, a long caption can overflow. Shrink the font or edit the layout once, not on every slide.</li>
+      <li>Charts, SmartArt, and animations are not copied. If a slide was only a chart, you will get the title and a note that the chart was skipped. Paste the chart back from the original.</li>
+      <li>Wide tables use the body area of Title and Content. Column widths are even. Merge cells are not preserved.</li>
+    </ul>
+
+    <h2>Related</h2>
+    <p><a href="change-pptx-template.html">Change a PPTX template</a> · <a href="convert-slides-to-company-template.html">Convert slides to a company template</a> · <a href="rebrand-pptx-without-uploading.html">Keep the file on your computer</a></p>
+  </article>
+  <footer class="site-footer">
+    <p>Built by <a href="https://github.com/Nidhi-bhai">Nidhi Karuturi</a></p>
+    <p><a href="../privacy.html">Privacy</a></p>
+  </footer>
+</body>
+</html>
