@@ -22,8 +22,8 @@
     "operatingSystem": "Web",
     "offers": [
       {"@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "First 5 slides plus a watermark slide"},
-      {"@type": "Offer", "price": "5.00", "priceCurrency": "USD", "description": "Pro for one deck"},
-      {"@type": "Offer", "price": "12.00", "priceCurrency": "USD", "description": "Pro monthly"}
+      {"@type": "Offer", "price": "5.00", "priceCurrency": "USD", "description": "$5 one deck: unlimited re-conversions for 24 hours in this browser. Does not auto-renew."},
+      {"@type": "Offer", "price": "12.00", "priceCurrency": "USD", "description": "$12 30-day pass, paid once. Does not auto-renew."}
     ],
     "description": "Browser-only tool that applies a company PowerPoint template to an existing PPTX.",
     "url": "https://nidhi-bhai.github.io/slide-fit/"
@@ -111,7 +111,7 @@
             <tr><td>A table</td><td>Title and Content, table in the body</td></tr>
           </tbody>
         </table>
-        <p class="fine">Animations, speaker notes, and charts are not rebuilt. After you download, nudge anything that overflowed a placeholder. That is normal when a 4:3 deck lands on a widescreen master.</p>
+        <p class="fine">Animations, speaker notes, charts, and SmartArt are not rebuilt. Inline formatting — bold, colour, and links — is not kept; the words come across as plain text. After you download, nudge anything that overflowed a placeholder. That is normal when a 4:3 deck lands on a widescreen master.</p>
       </div>
     </section>
 
@@ -120,44 +120,50 @@
       <p>Free covers a short deck. Pro is for the real one. Both run in the browser.</p>
       <div class="price-grid">
         <article class="price-card">
-          <h3>One deck</h3>
+          <h3>$5 = one deck</h3>
           <p class="price">$5</p>
-          <p>One-time. Unlocks every slide of the deck loaded in this tab and removes the watermark slide.</p>
+          <p>One payment on PayPal. $5 is one deck: unlimited re-conversions of that deck for 24 hours in this browser. There is no file fingerprint, so the window is not tied to the file bytes — re-saving the PowerPoint, or fitting again, still works. It does not auto-renew.</p>
           <div id="paypal-once"></div>
         </article>
         <article class="price-card">
-          <h3>Monthly</h3>
+          <h3>$12 30-day pass</h3>
           <p class="price">$12</p>
-          <p>Every deck, no watermark, for 30 days in this browser. Billed monthly through PayPal; cancel anytime in your PayPal account.</p>
-          <div id="paypal-month"></div>
+          <p>One-time PayPal order, not a subscription. Every deck, no watermark, for 30 days in this browser. It does not auto-renew. When the 30 days end, you are back on the free plan unless you pay again.</p>
+          <div id="paypal-pass"></div>
         </article>
       </div>
       <div id="simulate" hidden>
         <p><strong>Local preview only.</strong> These buttons do not take payment.</p>
         <div class="row-actions">
-          <button type="button" id="sim-deck">Simulate the $5 one-deck unlock</button>
-          <button type="button" id="sim-month">Simulate the $12 monthly unlock</button>
+          <button type="button" id="sim-deck">Simulate the $5 deck (24 hours)</button>
+          <button type="button" id="sim-pass">Simulate the $12 30-day pass</button>
         </div>
       </div>
+      <p id="order-receipt" class="receipt" hidden></p>
+      <form id="restore-form" class="restore">
+        <label for="restore-order">Restore purchase</label>
+        <input id="restore-order" name="order" type="text" autocomplete="off" spellcheck="false" placeholder="PayPal order id">
+        <button type="submit">Restore</button>
+      </form>
       <p id="paypal-note" class="fine"></p>
       <p id="unlock-status" class="fine"></p>
-      <p class="honest">Unlocks are an honesty system stored in this browser’s local storage. SlideFit does not run a license server, so a determined person can edit that storage. Clearing site data removes Pro. A production checkout would confirm the PayPal payment on a server you control. The deck itself is still never uploaded.</p>
-      <button type="button" id="forget">Forget unlocks in this browser</button>
+      <p class="honest">Honour-based, with no license server. The payment happens on PayPal. SlideFit stores only the PayPal order id, and only in this browser. Restore uses that saved time when this browser has it, and only the time still left. If this browser has never seen the id, Restore grants a 30-day pass starting now and does not ask PayPal whether the id was paid. Clearing site data removes the id. The deck itself is never uploaded.</p>
+      <button type="button" id="forget">Forget order ids in this browser</button>
     </section>
 
     <section id="faq" class="section faq">
       <h2>Questions</h2>
       <details open>
         <summary>Does the deck leave my computer?</summary>
-        <p>No. JSZip opens the file in the page. There is no account and no SlideFit server. If you pay, PayPal sees the payment, not the slides. Read the <a href="privacy.html">privacy note</a>.</p>
+        <p>No. JSZip opens the file in the page. There is no account and no SlideFit server. The payment happens on PayPal. SlideFit stores only the PayPal order id, and only in this browser. Read the <a href="privacy.html">privacy note</a>.</p>
       </details>
       <details>
         <summary>Will it look exactly like I designed it?</summary>
-        <p>It will look like the template. Content is placed in placeholders, so a custom collage will become a title, a text block, and pictures. That is the point of applying a company template.</p>
+        <p>It will look like the template. Content is placed in placeholders, so a custom collage will become a title, a text block, and pictures. Inline formatting — bold, colour, and links — is not kept. Charts, SmartArt, speaker notes, and animations are not rebuilt.</p>
       </details>
       <details>
         <summary>What is the free limit?</summary>
-        <p>Five content slides, then a SlideFit watermark slide. A longer deck is cut off at five until you unlock it. The samples include seven slides so you can see the cutoff.</p>
+        <p>The free plan keeps the first 5 slides, then adds a SlideFit watermark slide. A longer deck is cut off after the first 5 until a 24-hour deck or a 30-day pass is active. The samples include seven slides so you can see the cutoff.</p>
       </details>
       <details>
         <summary>Which template file should I use?</summary>
@@ -190,17 +196,18 @@
       {
         "@type": "Question",
         "name": "Does the deck leave my computer?",
-        "acceptedAnswer": {"@type": "Answer", "text": "No. SlideFit opens the PPTX in the browser with JSZip. PayPal, if you pay, sees the payment and not the slides."}
+        "acceptedAnswer": {"@type": "Answer", "text": "No. SlideFit opens the PPTX in the browser. The payment happens on PayPal. SlideFit stores only the PayPal order id, and only in this browser."}
       },
       {
         "@type": "Question",
         "name": "What is the free limit?",
-        "acceptedAnswer": {"@type": "Answer", "text": "Five content slides, plus a watermark slide. Pro removes the limit and the watermark."}
+        "acceptedAnswer": {"@type": "Answer", "text": "The free plan keeps the first 5 slides, plus a watermark slide."}
       }
     ]
   }
   </script>
   <script src="config.js"></script>
+  <script src="js/purchases.js"></script>
   <script src="js/vendor/jszip.min.js"></script>
   <script src="js/slidefit-core.js"></script>
   <script src="js/app.js"></script>

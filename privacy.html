@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Privacy — SlideFit keeps the deck on your computer</title>
-  <meta name="description" content="SlideFit processes PowerPoint files in the browser. Decks are not uploaded. PayPal handles payment only. Unlocks stay in local storage.">
+  <meta name="description" content="SlideFit processes PowerPoint files in the browser. Decks are not uploaded. The payment happens on PayPal. SlideFit stores only the order id locally.">
   <link rel="canonical" href="https://nidhi-bhai.github.io/slide-fit/privacy.html">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css">
@@ -25,10 +25,10 @@
     <ul>
       <li><strong>The page itself.</strong> Your browser requests HTML, CSS, fonts, and scripts from wherever this site is hosted (GitHub Pages, if that is where you opened it). Those requests do not include your PowerPoint.</li>
       <li><strong>Fonts.</strong> Fraunces and Outfit are files on this site, licensed under the SIL Open Font License. They are not loaded from a third-party font host.</li>
-      <li><strong>PayPal, if you pay.</strong> The PayPal Smart Buttons script is loaded from paypal.com only when <code>config.js</code> has a real client id. PayPal receives the checkout, not the deck. Until that id is set, the page does not load PayPal and only offers a clearly labeled local preview of the unlock.</li>
+      <li><strong>PayPal, if you pay.</strong> The payment happens on PayPal. The Smart Buttons script is loaded from paypal.com when <code>config.js</code> has a real client id. PayPal takes the $5 or $12 one-time payment. It does not receive the deck. SlideFit stores only the PayPal order id, and only in this browser.</li>
     </ul>
     <h2>What stays in the browser</h2>
-    <p>Pro status is written to <code>localStorage</code> on this origin. A one-deck unlock stores a hash of the file bytes. A monthly unlock stores an expiry about 30 days out. SlideFit does not check that with a server. Clearing site data removes it. That is an honesty system, and the pricing section says so.</p>
+    <p>After a payment, or after you restore an order id, this site writes that order id and the purchase time to <code>localStorage</code>. The deck is not part of that record. A $5 deck lasts 24 hours. A $12 pass lasts 30 days. Neither auto-renews. SlideFit has no license server, so it cannot ask PayPal to confirm an id you type into Restore. If this browser already saved the purchase, Restore uses that time and only the time still left. If it did not, Restore grants a 30-day pass starting now. Clearing site data removes the order id.</p>
     <h2>Samples</h2>
     <p>The Northwind and Harbor sample decks are fetched from this same site when you click the sample buttons. They are demo files, not your content.</p>
     <p><a href="index.html">Back to the tool</a></p>

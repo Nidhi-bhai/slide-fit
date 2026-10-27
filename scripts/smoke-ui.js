@@ -25,7 +25,8 @@ async function main() {
   });
 
   await page.setViewport({ width: 1280, height: 900 });
-  await page.goto(base, { waitUntil: "networkidle0" });
+  await page.goto(base, { waitUntil: "load" });
+  await page.waitForSelector("#restore-order");
   const h1 = await page.$eval("h1", (node) => node.textContent);
   if (!/Apply a template to an existing PowerPoint/.test(h1)) throw new Error("Unexpected h1: " + h1);
   await page.screenshot({ path: path.join(outDir, "desktop-top.png") });
@@ -47,7 +48,16 @@ async function main() {
   await page.waitForFunction(() => document.querySelector("#stage img"));
   await page.click('#thumbs .thumb:nth-child(5)');
   await page.waitForFunction(() => document.querySelector("#stage table"));
-  await page.click("#sim-deck");
+  const pitch = await page.evaluate(() => document.body.innerText);
+  if (!/does not auto-renew/.test(pitch)) throw new Error("Missing auto-renew copy");
+  if (!/first 5 slides/.test(pitch)) throw new Error("Missing first 5 slides copy");
+  const appJs = await page.evaluate(async () => (await fetch("js/app.js")).text());
+  if (/PLAN_ID|subscription|SHA-256/.test(appJs)) throw new Error("app.js still describes the old billing");
+
+  await page.$eval("#restore-order", (node) => {
+    node.value = "SMOKE-ORDER-1";
+  });
+  await page.click("#restore-form button[type=submit]");
   await page.waitForFunction(() => document.querySelectorAll("#thumbs .thumb").length === 7);
   const proText = await page.$eval("#preview", (node) => node.innerText);
   if (/SlideFit free watermark/.test(proText)) throw new Error("Watermark still present after unlock");
@@ -77,7 +87,7 @@ async function main() {
   await page.setViewport({ width: 390, height: 844 });
   await page.screenshot({ path: path.join(outDir, "mobile-preview.png"), fullPage: false });
 
-  await page.goto(new URL("how-to/apply-template-to-existing-powerpoint.html", base).href, { waitUntil: "networkidle0" });
+  await page.goto(new URL("how-to/apply-template-to-existing-powerpoint.html", base).href, { waitUntil: "load" });
   const guide = await page.$eval("h1", (node) => node.textContent);
   if (!/Apply a template/.test(guide)) throw new Error("Guide h1 missing");
   const credit = await page.$eval("footer", (node) => node.innerText);

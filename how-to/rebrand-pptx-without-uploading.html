@@ -25,7 +25,7 @@
 
     <h2>What stays on the machine</h2>
     <p><a href="../index.html">SlideFit</a> reads the files you pick with the file input. JSZip, included in the page, unzips them. The script builds a new pptx and hands it back as a download. There is no <code>fetch</code> of your deck. You can confirm that in the browser’s network panel: fitting the slides does not add a request whose body is the PowerPoint. The only requests are for the page, its scripts, and — if you click them — the public sample files.</p>
-    <p>PayPal is the exception, and only if a real client id is set in <code>config.js</code>. That script talks to PayPal about the $5 or $12 charge. It does not receive the presentation. While the client id is still the placeholder, PayPal is not loaded at all.</p>
+    <p>PayPal is the exception, and only if a real client id is set in <code>config.js</code>. The payment happens on PayPal. That script does not receive the presentation. SlideFit stores only the PayPal order id, and only in this browser. While the client id is still the placeholder, PayPal is not loaded at all.</p>
 
     <h2>A rebrand pass that respects that boundary</h2>
     <ol>
@@ -33,11 +33,11 @@
       <li>Open SlideFit. Drop the old deck and the template. Fit.</li>
       <li>Use the preview to see that titles, bullets, pictures, and tables survived. The preview is drawn in the page from the same extraction. It is not a screenshot service.</li>
       <li>Download and open the file locally in PowerPoint or LibreOffice.</li>
-      <li>If the deck is longer than five slides, the free file stops there and adds a watermark slide named “SlideFit free watermark”. Pay for that deck, or use the local preview unlock while payments are unconfigured, then fit again. The second download replaces the short file. Nothing about that step uploads the slides.</li>
+      <li>If the deck is longer than the first 5 slides, the free file stops there and adds a watermark slide named “SlideFit free watermark”. A $5 deck lasts 24 hours in this browser and is not tied to the file bytes. A $12 pass lasts 30 days and does not auto-renew. Fit again after you pay. Nothing about that step uploads the slides.</li>
     </ol>
 
     <h2>What “unlock” does and does not mean</h2>
-    <p>The Pro flag is written to <code>localStorage</code> for this site. It is not a cryptographic license. The page says so next to the price. Use it as a convenience for a real PayPal button, or as a way to try the full sample conversion. Do not describe it to a customer as a server-enforced subscription unless you add a server. The privacy property — the deck is not uploaded — does not depend on that flag.</p>
+    <p>SlideFit writes the PayPal order id and the purchase time to <code>localStorage</code>. The deck is not part of that record, and there is no license server. Restore is honour-based: if this browser saved the purchase, you get the time still left; if it did not, Restore grants a 30-day pass starting now. Neither the 24-hour deck nor the 30-day pass auto-renews. The deck is still not uploaded.</p>
 
     <h2>When you still should not use a browser tool</h2>
     <p>If policy forbids opening the file in a browser at all, even locally, use PowerPoint on the desktop: start from the template, Reuse Slides, then reset layouts. SlideFit is for the case where the browser is allowed and a third-party upload is not.</p>

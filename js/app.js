@@ -1,10 +1,6 @@
 (function () {
   const cfg = window.SLIDEFIT_CONFIG || {};
-  const KEYS = {
-    monthly: "slidefit.monthlyUntil",
-    decks: "slidefit.unlockedDecks",
-    pending: "slidefit.pendingDeck",
-  };
+  const KEYS = { purchases: "slidefit.purchases" };
   const KIND_LABEL = {
     title: "Title slide",
     section: "Section header",
@@ -18,7 +14,6 @@
   const state = {
     deckBuf: null,
     deckName: "",
-    deckHash: "",
     templateBuf: null,
     templateName: "",
     result: null,
@@ -29,43 +24,28 @@
 
   function paypalConfigured() {
     const id = cfg.PAYPAL_CLIENT_ID || "";
-    const plan = cfg.PLAN_ID || "";
-    return id && !id.includes("YOUR_PAYPAL") && plan && !plan.includes("YOUR_PLAN");
+    return Boolean(id) && !id.includes("YOUR_PAYPAL");
   }
 
-  function readDecks() {
+  function loadPurchases() {
     try {
-      const parsed = JSON.parse(localStorage.getItem(KEYS.decks) || "[]");
+      const parsed = JSON.parse(localStorage.getItem(KEYS.purchases) || "[]");
       return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       return [];
     }
   }
 
-  function monthlyUntil() {
-    return Number(localStorage.getItem(KEYS.monthly) || 0);
+  function storePurchases(list) {
+    localStorage.setItem(KEYS.purchases, JSON.stringify(list));
   }
 
-  async function digest(buf) {
-    if (crypto.subtle) {
-      const hash = await crypto.subtle.digest("SHA-256", buf);
-      return Array.from(new Uint8Array(hash))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-    }
-    return "len-" + buf.byteLength;
+  function currentAccess() {
+    return window.SlideFitPurchases.access(loadPurchases(), Date.now());
   }
 
-  function accessFor(hash) {
-    if (monthlyUntil() > Date.now()) return { pro: true, reason: "monthly" };
-    const decks = readDecks();
-    if (localStorage.getItem(KEYS.pending) === "1" && hash) {
-      decks.push(hash);
-      localStorage.setItem(KEYS.decks, JSON.stringify(decks));
-      localStorage.removeItem(KEYS.pending);
-    }
-    if (hash && decks.includes(hash)) return { pro: true, reason: "deck" };
-    return { pro: false, reason: "free" };
+  function productLabel(product) {
+    return product === "pass" ? "$12 30-day pass" : "$5 deck (24 hours)";
   }
 
   function setStatus(text) {
@@ -79,15 +59,12 @@
   }
 
   function refreshUnlockNote() {
-    const access = accessFor(state.deckHash);
+    const access = currentAccess();
     const note = el("unlock-status");
-    if (access.reason === "monthly") {
-      const when = new Date(monthlyUntil());
-      note.textContent = "Pro monthly is on in this browser until " + when.toLocaleDateString() + ". It lives in local storage, not on a server.";
-    } else if (access.reason === "deck") {
-      note.textContent = "This deck is unlocked in this browser. Clearing site data removes the unlock.";
-    } else if (localStorage.getItem(KEYS.pending) === "1") {
-      note.textContent = "A one-deck unlock is waiting. Load the deck, then fit it.";
+    if (access.pro && access.reason === "pass") {
+      note.textContent = "30-day pass is on in this browser until " + new Date(access.until).toLocaleString() + ". Order id " + access.orderId + ". It does not auto-renew. SlideFit stores only that order id, in this browser.";
+    } else if (access.pro) {
+      note.textContent = "$5 deck is on until " + new Date(access.until).toLocaleString() + " (24 hours from the purchase). Order id " + access.orderId + ". Unlimited re-conversions in this browser, not tied to the file bytes. It does not auto-renew.";
     } else {
       note.textContent = "Free plan: the first 5 slides, plus a watermark slide.";
     }
@@ -107,7 +84,6 @@
     if (kind === "deck") {
       state.deckBuf = buf;
       state.deckName = name;
-      state.deckHash = await digest(buf);
       markReady("drop-deck", name);
     } else {
       state.templateBuf = buf;
@@ -290,15 +266,15 @@
     });
     el("map-note").textContent = lines.join("  ·  ");
 
-    const access = accessFor(state.deckHash);
+    const access = currentAccess();
     if (result.omitted > 0) {
-      setStatus("Free plan kept 5 of " + (5 + result.omitted) + " slides and added a watermark. Pro converts the whole deck and leaves that slide out.");
+      setStatus("Free plan kept the first 5 of " + (5 + result.omitted) + " slides and added a watermark. A $5 deck or a $12 pass converts the whole deck and leaves that slide out.");
     } else if (result.watermark) {
-      setStatus("Free plan added a watermark slide at the end. Pro leaves it out.");
-    } else if (access.reason === "monthly") {
-      setStatus("Pro monthly: " + result.slides.length + " slides, no watermark.");
+      setStatus("Free plan added a watermark slide after the first 5 slides. A pass leaves it out.");
+    } else if (access.reason === "pass") {
+      setStatus("30-day pass: " + result.slides.length + " slides, no watermark. This pass does not auto-renew.");
     } else {
-      setStatus("Pro for this deck: " + result.slides.length + " slides, no watermark.");
+      setStatus("24-hour deck: " + result.slides.length + " slides, no watermark. Refit as often as you want until the window ends. It does not auto-renew.");
     }
   }
 
@@ -311,7 +287,7 @@
     el("fit-button").disabled = true;
     setStatus("Fitting slides in this tab…");
     try {
-      const access = accessFor(state.deckHash);
+      const access = currentAccess();
       revokePreviews();
       const result = await window.SlideFit.applyTemplate(state.deckBuf, state.templateBuf, { pro: access.pro });
       preparePreviews(result);
@@ -343,30 +319,68 @@
     setTimeout(() => URL.revokeObjectURL(url), 2500);
   }
 
-  function unlockDeck() {
-    if (state.deckHash) {
-      const decks = readDecks();
-      if (!decks.includes(state.deckHash)) decks.push(state.deckHash);
-      localStorage.setItem(KEYS.decks, JSON.stringify(decks));
-    } else {
-      localStorage.setItem(KEYS.pending, "1");
+  function showReceipt(purchase, mode, until) {
+    const box = el("order-receipt");
+    box.hidden = false;
+    const label = productLabel(purchase.product);
+    const end = new Date(until).toLocaleString();
+    if (mode === "expired") {
+      box.textContent = "PayPal order id " + purchase.orderId + " is saved in this browser, and that " + label + " has ended. It does not auto-renew. Pay again if you want another window. SlideFit stores only the order id, and only here.";
+      return;
     }
-    refreshUnlockNote();
-    if (state.deckBuf && state.templateBuf) fit();
+    if (mode === "paid") {
+      box.textContent = "Paid on PayPal. Order id " + purchase.orderId + ". Save this id. " + label + " until " + end + ". It does not auto-renew. SlideFit stores only this order id, in this browser. The $5 window is not tied to the file bytes.";
+      return;
+    }
+    if (mode === "stored") {
+      box.textContent = "Restored PayPal order id " + purchase.orderId + " from the saved purchase time. " + label + " until " + end + ". It does not auto-renew. SlideFit stores only this order id, in this browser.";
+      return;
+    }
+    box.textContent = "No saved purchase time for PayPal order id " + purchase.orderId + ", so this " + label + " starts now and ends " + end + ". It does not auto-renew. This is honour-based: SlideFit has no license server and did not ask PayPal if the id is real. SlideFit stores only this order id, in this browser.";
   }
 
-  function unlockMonthly() {
-    localStorage.setItem(KEYS.monthly, String(Date.now() + 30 * 24 * 60 * 60 * 1000));
+  function grant(orderId, product, mode) {
+    const saved = window.SlideFitPurchases.recordPurchase(loadPurchases(), {
+      orderId: orderId,
+      product: product,
+      purchasedAt: Date.now(),
+    });
+    storePurchases(saved.purchases);
+    const until = saved.purchase.purchasedAt + window.SlideFitPurchases.duration(saved.purchase.product);
+    showReceipt(saved.purchase, mode || "paid", until);
+    refreshUnlockNote();
+    if (state.deckBuf && state.templateBuf && window.SlideFitPurchases.access(saved.purchases, Date.now()).pro) fit();
+  }
+
+  function restore(event) {
+    event.preventDefault();
+    showError("");
+    const orderId = el("restore-order").value;
+    let result;
+    try {
+      result = window.SlideFitPurchases.restorePurchase(loadPurchases(), { orderId: orderId }, Date.now());
+    } catch (err) {
+      showError(err.message);
+      return;
+    }
+    storePurchases(result.purchases);
+    if (!result.active) {
+      showReceipt(result.purchase, "expired", result.until);
+      refreshUnlockNote();
+      return;
+    }
+    showReceipt(result.purchase, result.fromStoredTime ? "stored" : "fresh", result.until);
     refreshUnlockNote();
     if (state.deckBuf && state.templateBuf) fit();
   }
 
   function forget() {
-    localStorage.removeItem(KEYS.monthly);
-    localStorage.removeItem(KEYS.decks);
-    localStorage.removeItem(KEYS.pending);
+    localStorage.removeItem(KEYS.purchases);
+    const box = el("order-receipt");
+    box.hidden = true;
+    box.textContent = "";
     refreshUnlockNote();
-    setStatus("Unlocks stored in this browser were removed.");
+    setStatus("Order ids stored in this browser were removed.");
   }
 
   function loadScript(src, namespace) {
@@ -381,50 +395,42 @@
     });
   }
 
+  function orderButton(selector, product, value, description) {
+    window.paypal.Buttons({
+      style: { layout: "vertical", shape: "rect", label: "pay" },
+      createOrder: function (data, actions) {
+        return actions.order.create({
+          purchase_units: [
+            {
+              description: description,
+              amount: { currency_code: cfg.CURRENCY || "USD", value: value },
+            },
+          ],
+        });
+      },
+      onApprove: function (data, actions) {
+        return actions.order.capture().then(function (details) {
+          const orderId = (details && details.id) || data.orderID;
+          grant(orderId, product, "paid");
+        });
+      },
+    }).render(selector);
+  }
+
   async function setupPayPal() {
     const note = el("paypal-note");
     if (!paypalConfigured()) {
       el("simulate").hidden = false;
-      note.textContent = "PayPal is not configured yet. config.js still has YOUR_PAYPAL_CLIENT_ID and YOUR_PLAN_ID. The simulate buttons only write a local unlock so you can preview Pro. They do not charge a card.";
+      note.textContent = "PayPal is not configured yet. config.js still has YOUR_PAYPAL_CLIENT_ID. The simulate buttons only write a local order id so you can preview a pass. They do not charge a card.";
       return;
     }
-    note.textContent = "PayPal opens in a secure window. SlideFit still does not upload the deck.";
+    note.textContent = "The payment happens on PayPal. SlideFit does not upload the deck. After you pay, this page shows the PayPal order id and stores only that id in this browser.";
     const currency = encodeURIComponent(cfg.CURRENCY || "USD");
     const client = encodeURIComponent(cfg.PAYPAL_CLIENT_ID);
     await loadScript("https://www.paypal.com/sdk/js?client-id=" + client + "&currency=" + currency + "&intent=capture");
     if (window.paypal && window.paypal.Buttons) {
-      window.paypal.Buttons({
-        style: { layout: "vertical", shape: "rect", label: "pay" },
-        createOrder: function (data, actions) {
-          return actions.order.create({
-            purchase_units: [
-              {
-                description: "SlideFit Pro — one deck",
-                amount: { currency_code: cfg.CURRENCY || "USD", value: cfg.PRICE_DECK || "5.00" },
-              },
-            ],
-          });
-        },
-        onApprove: function (data, actions) {
-          return actions.order.capture().then(unlockDeck);
-        },
-      }).render("#paypal-once");
-    }
-    await loadScript(
-      "https://www.paypal.com/sdk/js?client-id=" + client + "&vault=true&intent=subscription&currency=" + currency,
-      "paypalSubscription",
-    );
-    const sub = window.paypalSubscription;
-    if (sub && sub.Buttons) {
-      sub.Buttons({
-        style: { layout: "vertical", shape: "rect", label: "subscribe" },
-        createSubscription: function (data, actions) {
-          return actions.subscription.create({ plan_id: cfg.PLAN_ID });
-        },
-        onApprove: function () {
-          unlockMonthly();
-        },
-      }).render("#paypal-month");
+      orderButton("#paypal-once", "deck", cfg.PRICE_DECK || "5.00", "SlideFit — one deck, 24 hours");
+      orderButton("#paypal-pass", "pass", cfg.PRICE_PASS || "12.00", "SlideFit — 30-day pass, one time");
     }
   }
 
@@ -435,8 +441,9 @@
     el("load-sample-template").addEventListener("click", () => loadSample("template").catch((err) => showError(err.message)));
     el("fit-button").addEventListener("click", fit);
     el("download").addEventListener("click", download);
-    el("sim-deck").addEventListener("click", unlockDeck);
-    el("sim-month").addEventListener("click", unlockMonthly);
+    el("sim-deck").addEventListener("click", function () { grant("LOCAL-DECK-PREVIEW", "deck", "paid"); });
+    el("sim-pass").addEventListener("click", function () { grant("LOCAL-PASS-PREVIEW", "pass", "paid"); });
+    el("restore-form").addEventListener("submit", restore);
     el("forget").addEventListener("click", forget);
     refreshUnlockNote();
     setupPayPal().catch((err) => {

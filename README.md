@@ -2,7 +2,7 @@
 
 Apply a company PowerPoint template to a deck you already have. SlideFit runs in the browser: drop a `.pptx` and a template `.pptx`, preview the mapped slides, and download a new file. Nothing is uploaded.
 
-Free conversions keep the first five slides and add a watermark slide. Pro ($5 once per deck, or $12/month) keeps every slide and leaves the watermark out. PayPal client id and plan id live in [`config.js`](config.js). Until those placeholders are replaced, the page offers a clearly labeled local preview of the unlock instead of loading PayPal. Unlocks are stored in this browser only — there is no license server.
+Free conversions keep the first 5 slides and add a watermark slide. $5 is one deck: unlimited re-conversions for 24 hours in this browser, not tied to the file bytes. $12 is a one-time 30-day pass. Neither auto-renews. The PayPal client id lives in [`config.js`](config.js). The payment happens on PayPal. SlideFit stores only the order id, in this browser, and there is no license server.
 
 Built by [Nidhi Karuturi](https://github.com/Nidhi-bhai).
 
@@ -13,11 +13,11 @@ Open `index.html` over HTTP (GitHub Pages, or `python3 -m http.server`). Then ei
 - `samples/northwind-quarterly.pptx` — a 7-slide content deck (title, section, bullets, picture, table, and two further slides)
 - `samples/harbor-company-template.pptx` — a widescreen company template (Harbor colours, Georgia / Verdana, master bar)
 
-The free result is six slides (five plus the watermark). A Pro unlock converts all seven.
+The free result is six slides (the first 5 plus the watermark). A 24-hour deck or a 30-day pass converts all seven.
 
 ## What is preserved
 
-Titles, subtitles, bullets, pictures, and tables are written into the closest template layout (Title Slide, Section Header, Title and Content, Picture with Caption). Fonts and colours follow the template theme. Charts, SmartArt, notes, and animations are not rebuilt.
+Titles, subtitles, bullets, pictures, and tables are written into the closest template layout (Title Slide, Section Header, Title and Content, Picture with Caption). Fonts and colours follow the template theme. Inline formatting (bold, colour, links) is not kept. Charts, SmartArt, notes, and animations are not rebuilt.
 
 ## Develop
 

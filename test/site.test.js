@@ -38,10 +38,11 @@ test("the landing page targets the template-conversion queries and wires the app
   assert.match(html, /config\.js/);
   assert.match(html, /id="fit-button"/);
   assert.match(html, /id="paypal-once"/);
-  assert.match(html, /id="paypal-month"/);
+  assert.match(html, /id="paypal-pass"/);
+  assert.match(html, /id="restore-order"/);
   const config = read("config.js");
   assert.match(config, /PAYPAL_CLIENT_ID/);
-  assert.match(config, /PLAN_ID/);
+  assert.doesNotMatch(config, /PLAN_ID/);
   assert.doesNotMatch(config, /CLIENT_SECRET/);
 });
 
