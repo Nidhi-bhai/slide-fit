@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SlideFit — Apply a template to an existing PowerPoint</title>
+  <meta name="description" content="Change a PPTX template in the browser. SlideFit reflows titles, bullets, images, and tables from an existing deck into your company template. Nothing is uploaded.">
+  <link rel="canonical" href="https://nidhi-bhai.github.io/slide-fit/">
+  <meta property="og:title" content="SlideFit — Apply a template to an existing PowerPoint">
+  <meta property="og:description" content="Convert slides to a company template without uploading the deck. Preview, then download a new PPTX.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nidhi-bhai.github.io/slide-fit/">
+  <meta name="theme-color" content="#f3eee6">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "SlideFit",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": [
+      {"@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "First 5 slides plus a watermark slide"},
+      {"@type": "Offer", "price": "5.00", "priceCurrency": "USD", "description": "Pro for one deck"},
+      {"@type": "Offer", "price": "12.00", "priceCurrency": "USD", "description": "Pro monthly"}
+    ],
+    "description": "Browser-only tool that applies a company PowerPoint template to an existing PPTX.",
+    "url": "https://nidhi-bhai.github.io/slide-fit/"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#bench">Skip to the tool</a>
+  <noscript><p class="wrap">SlideFit needs JavaScript. It still runs in your browser — the deck is not uploaded.</p></noscript>
+  <header class="site-header">
+    <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>SlideFit</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="how-to/apply-template-to-existing-powerpoint.html">Guides</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Browser-only · no upload</p>
+      <h1>Apply a template to an existing PowerPoint</h1>
+      <p class="lede">You already wrote the deck. Your company already has a template. SlideFit reads both <strong>.pptx</strong> files in this tab and rebuilds every slide on the template’s layouts, fonts, and colours. Change a PPTX template, or convert slides to a company template, without sending the file anywhere.</p>
+    </section>
+
+    <section id="bench" class="bench" aria-labelledby="bench-title">
+      <h2 id="bench-title">Fit a deck</h2>
+      <div class="drops">
+        <label class="drop" id="drop-deck">
+          <input class="file-input" id="file-deck" type="file" accept=".pptx,.potx,.ppsx,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+          <span class="drop-kicker">1 · Your deck</span>
+          <span class="drop-title">Drop a .pptx</span>
+          <span class="drop-hint">The slides you already wrote</span>
+        </label>
+        <label class="drop" id="drop-template">
+          <input class="file-input" id="file-template" type="file" accept=".pptx,.potx,.ppsx,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+          <span class="drop-kicker">2 · Company template</span>
+          <span class="drop-title">Drop a template</span>
+          <span class="drop-hint">A .pptx that carries your master and layouts</span>
+        </label>
+      </div>
+      <div class="bench-actions">
+        <button type="button" id="load-sample-deck">Use the Northwind sample</button>
+        <button type="button" id="load-sample-template">Use the Harbor template</button>
+        <button type="button" class="primary" id="fit-button" disabled>Fit slides</button>
+      </div>
+      <p id="status" class="status" role="status">Add both files, or load the two samples. Processing stays in this browser.</p>
+      <p id="alert" class="alert" role="alert" hidden></p>
+
+      <div id="preview" class="preview" hidden>
+        <div class="stage-wrap">
+          <div id="stage"></div>
+          <div id="thumbs" class="thumbs" aria-label="Slides"></div>
+        </div>
+        <p id="map-note" class="map-note fine"></p>
+        <div class="row-actions">
+          <button type="button" class="primary" id="download" disabled>Download .pptx</button>
+        </div>
+        <p class="fine">The preview is a reading copy so you can check titles, bullets, pictures, and tables. The download uses the template’s real layout positions, theme fonts, and theme colours.</p>
+      </div>
+    </section>
+
+    <section id="how" class="section split">
+      <div>
+        <h2>How SlideFit changes a PPTX template</h2>
+        <p>PowerPoint stores a deck as a zip of XML. The words, pictures, and tables live on slides. The look lives on the slide master, the layouts, and the theme. SlideFit keeps the template’s master and writes your content into the closest layout.</p>
+        <ol class="steps">
+          <li><strong>Read the deck</strong> Titles, subtitles, bullets, pictures, and tables are pulled out of each slide. Charts and SmartArt are left behind, and the page says so.</li>
+          <li><strong>Pick a layout</strong> An opening title maps to Title Slide. A short divider maps to Section Header. Bullets map to Title and Content. A picture with text maps to Picture with Caption.</li>
+          <li><strong>Write a new file</strong> Your originals are not edited. The download is a new .pptx that opens in PowerPoint or LibreOffice, with the template’s fonts and colours.</li>
+        </ol>
+      </div>
+      <div>
+        <h2>What moves across</h2>
+        <table class="plain">
+          <thead>
+            <tr><th>In your deck</th><th>On the template</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Title and subtitle</td><td>Title Slide</td></tr>
+            <tr><td>A short section line</td><td>Section Header</td></tr>
+            <tr><td>Title and bullets</td><td>Title and Content</td></tr>
+            <tr><td>Picture plus text</td><td>Picture with Caption</td></tr>
+            <tr><td>A table</td><td>Title and Content, table in the body</td></tr>
+          </tbody>
+        </table>
+        <p class="fine">Animations, speaker notes, and charts are not rebuilt. After you download, nudge anything that overflowed a placeholder. That is normal when a 4:3 deck lands on a widescreen master.</p>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <h2>Pricing</h2>
+      <p>Free covers a short deck. Pro is for the real one. Both run in the browser.</p>
+      <div class="price-grid">
+        <article class="price-card">
+          <h3>One deck</h3>
+          <p class="price">$5</p>
+          <p>One-time. Unlocks every slide of the deck loaded in this tab and removes the watermark slide.</p>
+          <div id="paypal-once"></div>
+        </article>
+        <article class="price-card">
+          <h3>Monthly</h3>
+          <p class="price">$12</p>
+          <p>Every deck, no watermark, for 30 days in this browser. PayPal Smart Buttons use the plan id in <code>config.js</code>.</p>
+          <div id="paypal-month"></div>
+        </article>
+      </div>
+      <div id="simulate" hidden>
+        <p><strong>Local preview only.</strong> These buttons do not take payment.</p>
+        <div class="row-actions">
+          <button type="button" id="sim-deck">Simulate the $5 one-deck unlock</button>
+          <button type="button" id="sim-month">Simulate the $12 monthly unlock</button>
+        </div>
+      </div>
+      <p id="paypal-note" class="fine"></p>
+      <p id="unlock-status" class="fine"></p>
+      <p class="honest">Unlocks are an honesty system stored in this browser’s local storage. SlideFit does not run a license server, so a determined person can edit that storage. Clearing site data removes Pro. A production checkout would confirm the PayPal payment on a server you control. The deck itself is still never uploaded.</p>
+      <button type="button" id="forget">Forget unlocks in this browser</button>
+    </section>
+
+    <section id="faq" class="section faq">
+      <h2>Questions</h2>
+      <details open>
+        <summary>Does the deck leave my computer?</summary>
+        <p>No. JSZip opens the file in the page. There is no account and no SlideFit server. If you pay, PayPal sees the payment, not the slides. Read the <a href="privacy.html">privacy note</a>.</p>
+      </details>
+      <details>
+        <summary>Will it look exactly like I designed it?</summary>
+        <p>It will look like the template. Content is placed in placeholders, so a custom collage will become a title, a text block, and pictures. That is the point of applying a company template.</p>
+      </details>
+      <details>
+        <summary>What is the free limit?</summary>
+        <p>Five content slides, then a SlideFit watermark slide. A longer deck is cut off at five until you unlock it. The samples include seven slides so you can see the cutoff.</p>
+      </details>
+      <details>
+        <summary>Which template file should I use?</summary>
+        <p>Any .pptx that already uses your master — a blank company deck is ideal. A .potx works too. SlideFit drops the template’s content slides and keeps the master, layouts, and theme.</p>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Guides</h2>
+      <div class="guides">
+        <a href="how-to/apply-template-to-existing-powerpoint.html">Apply a template to an existing PowerPoint</a>
+        <a href="how-to/change-pptx-template.html">Change a PPTX template and keep the words</a>
+        <a href="how-to/convert-slides-to-company-template.html">Convert slides to a company template</a>
+        <a href="how-to/rebrand-pptx-without-uploading.html">Rebrand a PowerPoint without uploading it</a>
+        <a href="how-to/map-slide-layouts.html">How SlideFit maps slide layouts</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built by <a href="https://github.com/Nidhi-bhai">Nidhi Karuturi</a></p>
+    <p><a href="privacy.html">Privacy</a> · <a href="https://github.com/Nidhi-bhai/slide-fit">Source</a></p>
+  </footer>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does the deck leave my computer?",
+        "acceptedAnswer": {"@type": "Answer", "text": "No. SlideFit opens the PPTX in the browser with JSZip. PayPal, if you pay, sees the payment and not the slides."}
+      },
+      {
+        "@type": "Question",
+        "name": "What is the free limit?",
+        "acceptedAnswer": {"@type": "Answer", "text": "Five content slides, plus a watermark slide. Pro removes the limit and the watermark."}
+      }
+    ]
+  }
+  </script>
+  <script src="config.js"></script>
+  <script src="js/vendor/jszip.min.js"></script>
+  <script src="js/slidefit-core.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
