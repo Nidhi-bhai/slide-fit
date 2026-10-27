@@ -1,6 +1,7 @@
 /* Purchase windows for SlideFit. No file hash, no subscription, no server.
-   A $5 deck purchase lasts 24 hours in this browser.
-   A $12 pass lasts 30 days. Neither renews on its own. */
+   $5 lasts 24 hours of conversions in this browser.
+   A $12 pass lasts 30 days. Neither renews on its own.
+   Restore only accepts a PayPal order id: 17 letters or digits. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
@@ -13,15 +14,23 @@
     return product === "pass" ? PASS_MS : DECK_MS;
   }
 
+  const ORDER_ID = /^[A-Z0-9]{17}$/;
+
   function normalizeOrderId(orderId) {
-    return String(orderId == null ? "" : orderId).trim();
+    return String(orderId == null ? "" : orderId).trim().toUpperCase();
+  }
+
+  function assertOrderId(orderId) {
+    if (!ORDER_ID.test(orderId)) {
+      throw new Error("Enter a PayPal order id: 17 letters or digits.");
+    }
   }
 
   function recordPurchase(list, input) {
     const orderId = normalizeOrderId(input && input.orderId);
     if (!orderId) throw new Error("PayPal did not return an order id.");
     const product = input.product === "pass" ? "pass" : "deck";
-    const existing = (list || []).find((item) => item.orderId === orderId);
+    const existing = (list || []).find((item) => normalizeOrderId(item && item.orderId) === orderId);
     if (existing) return { purchases: (list || []).slice(), purchase: existing, alreadyStored: true };
     const purchase = {
       orderId: orderId,
@@ -33,9 +42,9 @@
 
   function restorePurchase(list, input, now) {
     const orderId = normalizeOrderId(input && input.orderId);
-    if (!orderId) throw new Error("Enter a PayPal order id.");
+    assertOrderId(orderId);
     const at = now || Date.now();
-    const existing = (list || []).find((item) => item.orderId === orderId);
+    const existing = (list || []).find((item) => normalizeOrderId(item && item.orderId) === orderId);
     if (existing) {
       const until = existing.purchasedAt + duration(existing.product);
       return {
@@ -46,14 +55,13 @@
         fromStoredTime: true,
       };
     }
-    // No saved time for this id. There is no license server, so the honest
-    // fallback is a 30-day pass that starts now, not a choice of product.
-    const purchase = { orderId: orderId, product: "pass", purchasedAt: at };
+    // Unknown here. Do not invent a 30-day pass. A 24-hour pass starts now.
+    const purchase = { orderId: orderId, product: "day", purchasedAt: at };
     return {
       purchases: (list || []).concat(purchase),
       purchase: purchase,
       active: true,
-      until: at + PASS_MS,
+      until: at + DECK_MS,
       fromStoredTime: false,
     };
   }
@@ -62,7 +70,7 @@
     const at = now || Date.now();
     let best = null;
     (list || []).forEach((item) => {
-      if (!item || (item.product !== "deck" && item.product !== "pass")) return;
+      if (!item || (item.product !== "deck" && item.product !== "pass" && item.product !== "day")) return;
       const until = item.purchasedAt + duration(item.product);
       if (until <= at) return;
       if (!best || until > best.until) {

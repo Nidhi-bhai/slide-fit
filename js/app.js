@@ -45,7 +45,9 @@
   }
 
   function productLabel(product) {
-    return product === "pass" ? "$12 30-day pass" : "$5 deck (24 hours)";
+    if (product === "pass") return "$12 30-day pass";
+    if (product === "day") return "24-hour pass";
+    return "$5 for 24 hours";
   }
 
   function setStatus(text) {
@@ -63,8 +65,10 @@
     const note = el("unlock-status");
     if (access.pro && access.reason === "pass") {
       note.textContent = "30-day pass is on in this browser until " + new Date(access.until).toLocaleString() + ". Order id " + access.orderId + ". It does not auto-renew. SlideFit stores only that order id, in this browser.";
+    } else if (access.pro && access.reason === "day") {
+      note.textContent = "24-hour pass is on until " + new Date(access.until).toLocaleString() + ". Order id " + access.orderId + ". This browser had not saved that id, so this is not a 30-day restore. A full restore of a 30-day pass needs the same browser, or email nidhi69n@gmail.com with the order id.";
     } else if (access.pro) {
-      note.textContent = "$5 deck is on until " + new Date(access.until).toLocaleString() + " (24 hours from the purchase). Order id " + access.orderId + ". Unlimited re-conversions in this browser, not tied to the file bytes. It does not auto-renew.";
+      note.textContent = "$5 is on until " + new Date(access.until).toLocaleString() + ". Unlimited conversions for 24 hours in this browser. Order id " + access.orderId + ". It does not auto-renew.";
     } else {
       note.textContent = "Free plan: the first 5 slides, plus a watermark slide.";
     }
@@ -268,13 +272,15 @@
 
     const access = currentAccess();
     if (result.omitted > 0) {
-      setStatus("Free plan kept the first 5 of " + (5 + result.omitted) + " slides and added a watermark. A $5 deck or a $12 pass converts the whole deck and leaves that slide out.");
+      setStatus("Free plan kept the first 5 of " + (5 + result.omitted) + " slides and added a watermark. $5 covers unlimited conversions for 24 hours, and a $12 pass covers 30 days. Either leaves that slide out.");
     } else if (result.watermark) {
       setStatus("Free plan added a watermark slide after the first 5 slides. A pass leaves it out.");
     } else if (access.reason === "pass") {
       setStatus("30-day pass: " + result.slides.length + " slides, no watermark. This pass does not auto-renew.");
+    } else if (access.reason === "day") {
+      setStatus("24-hour pass: " + result.slides.length + " slides, no watermark. This is not a 30-day restore. It does not auto-renew.");
     } else {
-      setStatus("24-hour deck: " + result.slides.length + " slides, no watermark. Refit as often as you want until the window ends. It does not auto-renew.");
+      setStatus("24 hours: " + result.slides.length + " slides, no watermark. Unlimited conversions in this browser until the window ends. It does not auto-renew.");
     }
   }
 
@@ -329,14 +335,14 @@
       return;
     }
     if (mode === "paid") {
-      box.textContent = "Paid on PayPal. Order id " + purchase.orderId + ". Save this id. " + label + " until " + end + ". It does not auto-renew. SlideFit stores only this order id, in this browser. The $5 window is not tied to the file bytes.";
+      box.textContent = "Paid on PayPal. Order id " + purchase.orderId + ". Save this id. " + label + " until " + end + ". It does not auto-renew. SlideFit stores only this order id, in this browser.";
       return;
     }
     if (mode === "stored") {
       box.textContent = "Restored PayPal order id " + purchase.orderId + " from the saved purchase time. " + label + " until " + end + ". It does not auto-renew. SlideFit stores only this order id, in this browser.";
       return;
     }
-    box.textContent = "No saved purchase time for PayPal order id " + purchase.orderId + ", so this " + label + " starts now and ends " + end + ". It does not auto-renew. This is honour-based: SlideFit has no license server and did not ask PayPal if the id is real. SlideFit stores only this order id, in this browser.";
+    box.textContent = "This browser has not saved PayPal order id " + purchase.orderId + ", so Restore granted a 24-hour pass until " + end + ". A full restore of a 30-day pass needs the same browser, or email nidhi69n@gmail.com with the order id. SlideFit has no license server and did not ask PayPal if the id is real.";
   }
 
   function grant(orderId, product, mode) {
@@ -421,7 +427,7 @@
     const note = el("paypal-note");
     if (!paypalConfigured()) {
       el("simulate").hidden = false;
-      note.textContent = "PayPal is not configured yet. config.js still has YOUR_PAYPAL_CLIENT_ID. The simulate buttons only write a local order id so you can preview a pass. They do not charge a card.";
+      note.textContent = "PayPal is not loaded on this copy of the page. The buttons below only preview a pass. They do not charge a card.";
       return;
     }
     note.textContent = "The payment happens on PayPal. SlideFit does not upload the deck. After you pay, this page shows the PayPal order id and stores only that id in this browser.";
@@ -429,7 +435,7 @@
     const client = encodeURIComponent(cfg.PAYPAL_CLIENT_ID);
     await loadScript("https://www.paypal.com/sdk/js?client-id=" + client + "&currency=" + currency + "&intent=capture");
     if (window.paypal && window.paypal.Buttons) {
-      orderButton("#paypal-once", "deck", cfg.PRICE_DECK || "5.00", "SlideFit — one deck, 24 hours");
+      orderButton("#paypal-once", "deck", cfg.PRICE_DECK || "5.00", "SlideFit — unlimited conversions for 24 hours");
       orderButton("#paypal-pass", "pass", cfg.PRICE_PASS || "12.00", "SlideFit — 30-day pass, one time");
     }
   }

@@ -22,7 +22,7 @@
     "operatingSystem": "Web",
     "offers": [
       {"@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "First 5 slides plus a watermark slide"},
-      {"@type": "Offer", "price": "5.00", "priceCurrency": "USD", "description": "$5 one deck: unlimited re-conversions for 24 hours in this browser. Does not auto-renew."},
+      {"@type": "Offer", "price": "5.00", "priceCurrency": "USD", "description": "$5 unlocks unlimited conversions for 24 hours in this browser. Does not auto-renew."},
       {"@type": "Offer", "price": "12.00", "priceCurrency": "USD", "description": "$12 30-day pass, paid once. Does not auto-renew."}
     ],
     "description": "Browser-only tool that applies a company PowerPoint template to an existing PPTX.",
@@ -47,7 +47,7 @@
     <section class="hero">
       <p class="eyebrow">Browser-only · no upload</p>
       <h1>Apply a template to an existing PowerPoint</h1>
-      <p class="lede">You already wrote the deck. Your company already has a template. SlideFit reads both <strong>.pptx</strong> files in this tab and rebuilds every slide on the template’s layouts, fonts, and colours. Change a PPTX template, or convert slides to a company template, without sending the file anywhere.</p>
+      <p class="lede">You already wrote the deck. Your company already has a template. SlideFit reads both <strong>.pptx</strong> files in this tab and reflows titles, bullets, pictures and tables onto your template. Change a PPTX template, or convert slides to a company template, without sending the file anywhere.</p>
     </section>
 
     <section id="bench" class="bench" aria-labelledby="bench-title">
@@ -120,9 +120,9 @@
       <p>Free covers a short deck. Pro is for the real one. Both run in the browser.</p>
       <div class="price-grid">
         <article class="price-card">
-          <h3>$5 = one deck</h3>
+          <h3>$5 for 24 hours</h3>
           <p class="price">$5</p>
-          <p>One payment on PayPal. $5 is one deck: unlimited re-conversions of that deck for 24 hours in this browser. There is no file fingerprint, so the window is not tied to the file bytes — re-saving the PowerPoint, or fitting again, still works. It does not auto-renew.</p>
+          <p>One payment on PayPal. $5 unlocks unlimited conversions for 24 hours in this browser. The window is not tied to the file bytes, so re-saving the PowerPoint, or fitting again, still works. It does not auto-renew.</p>
           <div id="paypal-once"></div>
         </article>
         <article class="price-card">
@@ -135,19 +135,20 @@
       <div id="simulate" hidden>
         <p><strong>Local preview only.</strong> These buttons do not take payment.</p>
         <div class="row-actions">
-          <button type="button" id="sim-deck">Simulate the $5 deck (24 hours)</button>
+          <button type="button" id="sim-deck">Simulate the $5 24-hour window</button>
           <button type="button" id="sim-pass">Simulate the $12 30-day pass</button>
         </div>
       </div>
       <p id="order-receipt" class="receipt" hidden></p>
       <form id="restore-form" class="restore">
         <label for="restore-order">Restore purchase</label>
-        <input id="restore-order" name="order" type="text" autocomplete="off" spellcheck="false" placeholder="PayPal order id">
+        <input id="restore-order" name="order" type="text" autocomplete="off" spellcheck="false" maxlength="17" aria-describedby="restore-hint">
         <button type="submit">Restore</button>
       </form>
+      <p id="restore-hint" class="fine">A PayPal order id is 17 letters and digits.</p>
       <p id="paypal-note" class="fine"></p>
       <p id="unlock-status" class="fine"></p>
-      <p class="honest">Honour-based, with no license server. The payment happens on PayPal. SlideFit stores only the PayPal order id, and only in this browser. Restore uses that saved time when this browser has it, and only the time still left. If this browser has never seen the id, Restore grants a 30-day pass starting now and does not ask PayPal whether the id was paid. Clearing site data removes the id. The deck itself is never uploaded.</p>
+      <p class="honest">Honour-based, with no license server. The payment happens on PayPal. SlideFit stores only the PayPal order id, and only in this browser. If this browser saved the purchase, Restore uses that product and the time still left: a $5 purchase keeps its 24 hours, and a $12 purchase keeps its 30 days. If this browser has never seen the id, Restore grants only a 24-hour pass. A full restore of a 30-day pass needs the same browser, or email <a href="mailto:nidhi69n@gmail.com">nidhi69n@gmail.com</a> with the order id. Clearing site data removes the id. The deck itself is never uploaded.</p>
       <button type="button" id="forget">Forget order ids in this browser</button>
     </section>
 
@@ -163,7 +164,7 @@
       </details>
       <details>
         <summary>What is the free limit?</summary>
-        <p>The free plan keeps the first 5 slides, then adds a SlideFit watermark slide. A longer deck is cut off after the first 5 until a 24-hour deck or a 30-day pass is active. The samples include seven slides so you can see the cutoff.</p>
+        <p>The free plan keeps the first 5 slides, then adds a SlideFit watermark slide. A longer deck is cut off after the first 5 until the $5 24-hour window or a 30-day pass is active. The samples include seven slides so you can see the cutoff.</p>
       </details>
       <details>
         <summary>Which template file should I use?</summary>

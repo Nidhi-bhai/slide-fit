@@ -2,7 +2,7 @@
 
 Apply a company PowerPoint template to a deck you already have. SlideFit runs in the browser: drop a `.pptx` and a template `.pptx`, preview the mapped slides, and download a new file. Nothing is uploaded.
 
-Free conversions keep the first 5 slides and add a watermark slide. $5 is one deck: unlimited re-conversions for 24 hours in this browser, not tied to the file bytes. $12 is a one-time 30-day pass. Neither auto-renews. The PayPal client id lives in [`config.js`](config.js). The payment happens on PayPal. SlideFit stores only the order id, in this browser, and there is no license server.
+Free conversions keep the first 5 slides and add a watermark slide. $5 unlocks unlimited conversions for 24 hours in this browser, not tied to the file bytes. $12 is a one-time 30-day pass. Neither auto-renews. The payment happens on PayPal. SlideFit stores only the order id, in this browser, and there is no license server. Restore accepts a 17-character PayPal order id. A saved purchase keeps its own window. An unknown id gets 24 hours, and a full 30-day restore needs the same browser or an email to nidhi69n@gmail.com.
 
 Built by [Nidhi Karuturi](https://github.com/Nidhi-bhai).
 
@@ -13,7 +13,7 @@ Open `index.html` over HTTP (GitHub Pages, or `python3 -m http.server`). Then ei
 - `samples/northwind-quarterly.pptx` — a 7-slide content deck (title, section, bullets, picture, table, and two further slides)
 - `samples/harbor-company-template.pptx` — a widescreen company template (Harbor colours, Georgia / Verdana, master bar)
 
-The free result is six slides (the first 5 plus the watermark). A 24-hour deck or a 30-day pass converts all seven.
+The free result is six slides (the first 5 plus the watermark). A 24-hour window or a 30-day pass converts all seven.
 
 ## What is preserved
 

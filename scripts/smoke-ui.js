@@ -51,11 +51,16 @@ async function main() {
   const pitch = await page.evaluate(() => document.body.innerText);
   if (!/does not auto-renew/.test(pitch)) throw new Error("Missing auto-renew copy");
   if (!/first 5 slides/.test(pitch)) throw new Error("Missing first 5 slides copy");
+  if (!/reflows titles, bullets, pictures and tables onto your template/.test(pitch)) {
+    throw new Error("Hero still overclaims the conversion");
+  }
+  if (!/nidhi69n@gmail.com/.test(pitch)) throw new Error("Missing restore email");
+  if (/one deck|rebuilds every slide|config\.js|client id/i.test(pitch)) throw new Error("Customer page still has old copy");
   const appJs = await page.evaluate(async () => (await fetch("js/app.js")).text());
   if (/PLAN_ID|subscription|SHA-256/.test(appJs)) throw new Error("app.js still describes the old billing");
 
   await page.$eval("#restore-order", (node) => {
-    node.value = "SMOKE-ORDER-1";
+    node.value = "SMOKEORDER1234567";
   });
   await page.click("#restore-form button[type=submit]");
   await page.waitForFunction(() => document.querySelectorAll("#thumbs .thumb").length === 7);
