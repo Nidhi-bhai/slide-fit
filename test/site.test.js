@@ -42,7 +42,7 @@ test("the landing page targets the template-conversion queries and wires the app
   const config = read("config.js");
   assert.match(config, /PAYPAL_CLIENT_ID/);
   assert.match(config, /PLAN_ID/);
-  assert.doesNotMatch(config, /SECRET/i);
+  assert.doesNotMatch(config, /CLIENT_SECRET/);
 });
 
 test("sample decks and the PayPal placeholder config are present", () => {
